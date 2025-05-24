@@ -3,37 +3,53 @@
 
     [Route("api/[controller]")]
     [ApiController]
-    public class PollsController : ControllerBase
+    public class PollsController(IPollService pollService) : ControllerBase
     {
-        private readonly List<Poll> _polls =
-            [
-            new Poll
-            {
-                Id = 1,
-                Title="Poll 1",
-                Description="My first Poll"
-            },
-              new Poll
-            {
-                Id = 2,
-                Title="Poll 2",
-                Description="My second Poll"
-            }
-
-            ];
+        private readonly IPollService _pollService = pollService;
 
         [HttpGet]
         public IActionResult GetAll()
         {
-            return Ok(_polls);
+            return Ok(_pollService.GetAll());
         }
 
 
         [HttpGet("{id}")]
         public IActionResult Get(int id)
         {
-            var poll = _polls.SingleOrDefault(pol => pol.Id == id);
+            var poll = _pollService.Get(id);
             return poll is null ? NotFound() : Ok(poll);
+        }
+
+        [HttpPost("")]
+        public IActionResult Add(Poll request)
+        {
+            var newPoll = _pollService.Add(request);
+            // return Ok(newPoll);
+
+            return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
+
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult Update(int id, Poll request)
+        {
+            var isUpdate = _pollService.Update(id, request);
+
+            if (!isUpdate)
+                return NotFound();
+
+            return NoContent();
+
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult Delete(int id)
+        {
+            var isDeleted = _pollService.Delete(id);
+            if (!isDeleted)
+                return NotFound();
+            return NoContent();
         }
 
     }

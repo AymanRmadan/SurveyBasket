@@ -1,3 +1,5 @@
+using SurveyBasket.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -9,6 +11,9 @@ builder.Services.AddControllers();
 // Enable Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer(); // Required for Swagger UI
 builder.Services.AddSwaggerGen();
+
+
+builder.Services.AddScoped<IPollService, PollService>();
 
 var app = builder.Build();
 
