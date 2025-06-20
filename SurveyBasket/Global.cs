@@ -1,4 +1,5 @@
 ﻿global using Microsoft.AspNetCore.Mvc;
-global using SurveyBasket.Contracts;
-global using SurveyBasket.Models;
+global using Microsoft.EntityFrameworkCore.Metadata.Builders;
+global using SurveyBasket.Entities;
 global using SurveyBasket.Services;
+

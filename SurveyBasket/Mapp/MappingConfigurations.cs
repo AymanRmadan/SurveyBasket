@@ -10,7 +10,7 @@ namespace SurveyBasket.Mapp
             //if there is prop in response is not the same name in model use this way
             // var config = new TypeAdapterConfig();
             config.NewConfig<Poll, PollResponse>()
-                .Map(dest => dest.Notes, src => src.Description);
+                .Map(dest => dest.Summary, src => src.Summary);
         }
     }
 }

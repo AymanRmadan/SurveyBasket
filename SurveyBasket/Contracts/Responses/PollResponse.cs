@@ -3,8 +3,10 @@
     public record PollResponse(
         int Id,
         string Title,
-        // string Description
-        string Notes
+        string Summary,
+         bool IsPublished,
+         DateOnly StartsAt,
+         DateOnly EndsAt
         );
 
 }

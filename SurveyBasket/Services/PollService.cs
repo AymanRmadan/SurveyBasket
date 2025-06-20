@@ -1,7 +1,10 @@
 ﻿
+using Microsoft.EntityFrameworkCore;
+using SurveyBasket.Persistence;
+
 namespace SurveyBasket.Services
 {
-    public class PollService : IPollService
+    public class PollService(AppDbContext context) : IPollService
     {
         private static readonly List<Poll> _polls =
           [
@@ -9,45 +12,47 @@ namespace SurveyBasket.Services
             {
                 Id = 1,
                 Title="Poll 1",
-                Description="My first Poll"
+                Summary="My first Poll"
             },
               new Poll
             {
                 Id = 2,
                 Title="Poll 2",
-                Description="My second Poll"
+                Summary="My second Poll"
             }
 
           ];
+        private readonly AppDbContext _context = context;
 
+        public async Task<IEnumerable<Poll>> GetAllAsync() =>
+            await _context.polls.AsNoTracking().ToListAsync();
+        public async Task<Poll?> GetAsync(int id) =>
+            await _context.polls.FindAsync(id);
 
-        public IEnumerable<Poll> GetAll() => _polls;
-        public Poll? Get(int id) => _polls.SingleOrDefault(pol => pol.Id == id);
-
-        public Poll Add(Poll poll)
+        public async Task<Poll> AddAsync(Poll poll)
         {
-            poll.Id = _polls.Count + 1;
-            _polls.Add(poll);
+            await _context.AddAsync(poll);
+            await _context.SaveChangesAsync();
             return poll;
         }
 
         public bool Update(int id, Poll poll)
         {
-            var currentPoll = Get(id);
+            var currentPoll = GetAsync(id);
             if (currentPoll is null)
                 return false;
 
-            currentPoll.Title = poll.Title;
-            currentPoll.Description = poll.Description;
+            /* currentPoll.Title = poll.Title;
+             currentPoll.Summary = poll.Summary;*/
             return true;
         }
 
         public bool Delete(int id)
         {
-            var poll = Get(id);
+            var poll = GetAsync(id);
             if (poll is null) return false;
 
-            _polls.Remove(poll);
+            //  _polls.Remove(poll);
             return true;
         }
     }

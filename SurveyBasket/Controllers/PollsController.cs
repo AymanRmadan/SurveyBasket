@@ -12,18 +12,18 @@ namespace SurveyBasket.Controllers
         private readonly IPollService _pollService = pollService;
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<IActionResult> GetAll()
         {
-            var polls = _pollService.GetAll();
+            var polls = await pollService.GetAllAsync();
             var response = polls.Adapt<IEnumerable<PollResponse>>();
             return Ok(response);
         }
 
 
         [HttpGet("{id}")]
-        public IActionResult Get([FromRoute] int id)
+        public async Task<IActionResult> Get([FromRoute] int id)
         {
-            var poll = _pollService.Get(id);
+            var poll = await _pollService.GetAsync(id);
             // return poll is null ? NotFound() : Ok(poll.MapToPollResponse());
             if (poll is null)
             {
@@ -35,7 +35,7 @@ namespace SurveyBasket.Controllers
         }
 
         [HttpPost("")]
-        public IActionResult Add([FromBody] CreatePollRequest request)
+        public async Task<IActionResult> Add([FromBody] CreatePollRequest request)
         //[FromServices] IValidator<CreatePollRequest> validator)
         {
 
@@ -48,7 +48,7 @@ namespace SurveyBasket.Controllers
             //}
 
             // var newPoll = _pollService.Add(request.MapToPoll());
-            var newPoll = _pollService.Add(request.Adapt<Poll>());
+            var newPoll = await _pollService.AddAsync(request.Adapt<Poll>());
             return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
 
         }
