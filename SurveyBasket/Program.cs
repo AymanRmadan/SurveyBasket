@@ -1,4 +1,6 @@
 using Mapster;
+using MapsterMapper;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +16,10 @@ builder.Services.AddSwaggerGen();
 
 
 // Add Mapster
-builder.Services.AddMapster();
+// To read data from mapping Configurations
+var mappingConfig = TypeAdapterConfig.GlobalSettings;
+mappingConfig.Scan(Assembly.GetExecutingAssembly());
+builder.Services.AddSingleton<IMapper>(new Mapper(mappingConfig));
 
 
 builder.Services.AddScoped<IPollService, PollService>();
