@@ -1,4 +1,4 @@
-using SurveyBasket.Services;
+using Mapster;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +11,10 @@ builder.Services.AddControllers();
 // Enable Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer(); // Required for Swagger UI
 builder.Services.AddSwaggerGen();
+
+
+// Add Mapster
+builder.Services.AddMapster();
 
 
 builder.Services.AddScoped<IPollService, PollService>();
