@@ -35,8 +35,18 @@ namespace SurveyBasket.Controllers
         }
 
         [HttpPost("")]
-        public IActionResult Add(CreatePollRequest request)
+        public IActionResult Add([FromBody] CreatePollRequest request)
+        //[FromServices] IValidator<CreatePollRequest> validator)
         {
+
+            //var validationResult = validator.Validate(request);
+            //if (!validationResult.IsValid)
+            //{
+            //    var modelState = new ModelStateDictionary();
+            //    validationResult.Errors.ForEach(x => modelState.AddModelError(x.PropertyName, x.ErrorMessage));
+            //    return ValidationProblem(modelState);
+            //}
+
             // var newPoll = _pollService.Add(request.MapToPoll());
             var newPoll = _pollService.Add(request.Adapt<Poll>());
             return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll);
@@ -67,6 +77,8 @@ namespace SurveyBasket.Controllers
                 return NotFound();
             return NoContent();
         }
+
+
 
     }
 }

@@ -1,6 +1,4 @@
-using Mapster;
-using MapsterMapper;
-using System.Reflection;
+using SurveyBasket;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,19 +8,8 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 //builder.Services.AddOpenApi();
 
-// Enable Swagger/OpenAPI
-builder.Services.AddEndpointsApiExplorer(); // Required for Swagger UI
-builder.Services.AddSwaggerGen();
 
-
-// Add Mapster
-// To read data from mapping Configurations
-var mappingConfig = TypeAdapterConfig.GlobalSettings;
-mappingConfig.Scan(Assembly.GetExecutingAssembly());
-builder.Services.AddSingleton<IMapper>(new Mapper(mappingConfig));
-
-
-builder.Services.AddScoped<IPollService, PollService>();
+builder.Services.AddDependencies();
 
 var app = builder.Build();
 
