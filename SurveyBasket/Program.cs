@@ -5,8 +5,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
-
-
+// this will add all endpionts specified for identity like login,register,password endpionts and so on
+//builder.Services.AddIdentityApiEndpoints<ApplicationUser>().
+//    AddEntityFrameworkStores<AppDbContext>();
+//app.MapIdentityApi<ApplicationUser>();
 
 builder.Services.AddDependencies(builder.Configuration);
 

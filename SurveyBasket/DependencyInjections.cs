@@ -2,6 +2,7 @@
 using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using SurveyBasket.Persistence;
@@ -17,8 +18,10 @@ namespace SurveyBasket
             services.AddSwaggerConfig();
             services.AddMapsterConfig();
             services.AddDataBaseCofig(configuration);
+            services.AddAuthConfig();
 
             services.AddScoped<IPollService, PollService>();
+            services.AddScoped<IAuthService, AuthService>();
             return services;
         }
 
@@ -59,6 +62,14 @@ namespace SurveyBasket
         {
             services.AddFluentValidationAutoValidation()
                     .AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
+
+            return services;
+        }
+
+        private static IServiceCollection AddAuthConfig(this IServiceCollection services)
+        {
+            services.AddIdentity<ApplicationUser, IdentityRole>().
+                AddEntityFrameworkStores<AppDbContext>();
 
             return services;
         }

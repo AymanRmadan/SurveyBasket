@@ -6,22 +6,6 @@ namespace SurveyBasket.Services
 {
     public class PollService(AppDbContext context) : IPollService
     {
-        private static readonly List<Poll> _polls =
-          [
-          new Poll
-            {
-                Id = 1,
-                Title="Poll 1",
-                Summary="My first Poll"
-            },
-              new Poll
-            {
-                Id = 2,
-                Title="Poll 2",
-                Summary="My second Poll"
-            }
-
-          ];
         private readonly AppDbContext _context = context;
 
         public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellation) =>
