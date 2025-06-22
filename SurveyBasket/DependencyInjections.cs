@@ -2,11 +2,15 @@
 using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using SurveyBasket.Authantication;
 using SurveyBasket.Persistence;
 using System.Reflection;
+using System.Text;
 
 namespace SurveyBasket
 {
@@ -68,8 +72,36 @@ namespace SurveyBasket
 
         private static IServiceCollection AddAuthConfig(this IServiceCollection services)
         {
+            services.AddSingleton<IJwtProvider, JwtProvider>();
+
             services.AddIdentity<ApplicationUser, IdentityRole>().
                 AddEntityFrameworkStores<AppDbContext>();
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(o =>
+                {
+                    o.SaveToken = true;
+                    o.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        ValidateIssuer = true,
+                        ValidIssuer = "SurveyBasketApp",
+                        ValidateAudience = true,
+                        ValidAudience = "SurveyBasketApp users",
+                        ValidateLifetime = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TxNj0JuYaIjWbkJDZ27QAqNCLVeACRjV")),
+
+                    };
+                }
+                )
+
+                ;
+
+
 
             return services;
         }

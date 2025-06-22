@@ -6,9 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 // this will add all endpionts specified for identity like login,register,password endpionts and so on
-//builder.Services.AddIdentityApiEndpoints<ApplicationUser>().
+/*//builder.Services.AddIdentityApiEndpoints<ApplicationUser>().
 //    AddEntityFrameworkStores<AppDbContext>();
-//app.MapIdentityApi<ApplicationUser>();
+//app.MapIdentityApi<ApplicationUser>();*/
 
 builder.Services.AddDependencies(builder.Configuration);
 
