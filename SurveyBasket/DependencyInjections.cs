@@ -22,7 +22,7 @@ namespace SurveyBasket
             services.AddSwaggerConfig();
             services.AddMapsterConfig();
             services.AddDataBaseCofig(configuration);
-            services.AddAuthConfig();
+            services.AddAuthConfig(configuration);
 
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
@@ -70,12 +70,20 @@ namespace SurveyBasket
             return services;
         }
 
-        private static IServiceCollection AddAuthConfig(this IServiceCollection services)
+        private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration configuration)
         {
+            services.AddIdentity<ApplicationUser, IdentityRole>().
+        AddEntityFrameworkStores<AppDbContext>();
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
-            services.AddIdentity<ApplicationUser, IdentityRole>().
-                AddEntityFrameworkStores<AppDbContext>();
+            //  services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
+            services.AddOptions<JwtOptions>()
+                  .BindConfiguration("Jwt")
+                  .ValidateDataAnnotations()
+                  .ValidateOnStart();
+            var jwtSetting = configuration.GetSection("Jwt").Get<JwtOptions>();
+
+
 
             services.AddAuthentication(options =>
             {
@@ -89,17 +97,15 @@ namespace SurveyBasket
                     {
                         ValidateIssuerSigningKey = true,
                         ValidateIssuer = true,
-                        ValidIssuer = "SurveyBasketApp",
+                        ValidIssuer = jwtSetting?.Issuer,
                         ValidateAudience = true,
-                        ValidAudience = "SurveyBasketApp users",
+                        ValidAudience = jwtSetting?.Audience,
                         ValidateLifetime = true,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("TxNj0JuYaIjWbkJDZ27QAqNCLVeACRjV")),
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSetting?.Key!)),
 
                     };
                 }
-                )
-
-                ;
+                );
 
 
 
