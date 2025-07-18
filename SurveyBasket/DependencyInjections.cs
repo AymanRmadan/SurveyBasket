@@ -18,6 +18,23 @@ namespace SurveyBasket
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
         {
+            var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+            /*  services.AddCors(options =>
+              options.AddPolicy("MyPolicy", builder =>
+                   builder.AllowAnyOrigin()
+                         .AllowAnyMethod()
+                          .WithOrigins(allowedOrigins!)
+                          ));*/
+
+            services.AddCors(options =>
+                 options.AddDefaultPolicy(builder =>
+                     builder.AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .WithOrigins(allowedOrigins!)
+                      )
+                 );
+
             services.AddFluentValidationConfig();
             services.AddSwaggerConfig();
             services.AddMapsterConfig();
