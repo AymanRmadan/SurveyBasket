@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
+using SurveyBasket.Contracts.Authentications.Requests;
 
 namespace SurveyBasket.Controllers
 {
@@ -9,10 +10,25 @@ namespace SurveyBasket.Controllers
         private readonly IAuthService _authService = authService;
 
         [HttpPost("")]
-        public async Task<IActionResult> LoginAsync(LoginRequest request, CancellationToken cancellation)
+        public async Task<IActionResult> LoginAsync([FromBody] LoginRequest request, CancellationToken cancellation)
         {
             var authResult = await _authService.GetTokenAsync(request.Email, request.Password, cancellation);
             return authResult is null ? BadRequest("Invalid email or pass") : Ok(authResult);
+        }
+
+
+        [HttpPost("refresh")]
+        public async Task<IActionResult> RefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellation)
+        {
+            var authResult = await _authService.GetRefreshTokenAsync(request.token, request.refreshToken, cancellation);
+            return authResult is null ? BadRequest("Invalid token") : Ok(authResult);
+        }
+
+        [HttpPost("revoke-refresh-token")]
+        public async Task<IActionResult> RevokeRefreshTokenAsync([FromBody] RefreshTokenRequest request, CancellationToken cancellation)
+        {
+            var isRevoked = await _authService.RevokeRefreshTokenAsync(request.token, request.refreshToken, cancellation);
+            return isRevoked ? Ok() : BadRequest("Operation Failed");
         }
     }
 }
