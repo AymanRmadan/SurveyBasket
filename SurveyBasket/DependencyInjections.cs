@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveyBasket.Authantication;
+using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 using System.Reflection;
 using System.Text;
@@ -43,6 +44,9 @@ namespace SurveyBasket
 
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IAuthService, AuthService>();
+
+            services.AddExceptionHandler<GlobalExceptionHandler>();
+            services.AddProblemDetails();
             return services;
         }
 

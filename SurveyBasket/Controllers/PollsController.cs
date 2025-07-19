@@ -59,8 +59,10 @@ namespace SurveyBasket.Controllers
             // var newPoll = _pollService.Add(request.MapToPoll()); 
             #endregion
 
-            var newPoll = await _pollService.AddAsync(request.Adapt<Poll>(), cancellation);
-            return CreatedAtAction(nameof(Get), new { id = newPoll.Id }, newPoll.Adapt<PollResponse>());
+            var result = await _pollService.AddAsync(request, cancellation);
+            return result.IsSuccess
+                ? CreatedAtAction(nameof(Get), new { id = result.Value.Id }, result.Value)
+                : result.ToProblem();
 
         }
 

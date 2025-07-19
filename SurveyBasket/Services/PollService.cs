@@ -23,25 +23,36 @@ namespace SurveyBasket.Services
 
 
         /*CancellationToken this is use when i added items and wanted to cancel this item this CancellationToken help to cancel and not saved in database */
-        public async Task<PollResponse> AddAsync(Poll poll, CancellationToken cancellation)
+        public async Task<Result<PollResponse>> AddAsync(PollRequest request, CancellationToken cancellation)
         {
+            var isExistintTitle = await _context.polls.AnyAsync(x => x.Title == request.Title, cancellationToken: cancellation);
+            if (isExistintTitle)
+            {
+                return Result.Failure<PollResponse>(PollErrors.DuplicatedPollTitle);
+            }
+            var poll = request.Adapt<Poll>();
             await _context.AddAsync(poll, cancellation);
             await _context.SaveChangesAsync();
-            return poll.Adapt<PollResponse>();
+            return Result.Success(poll.Adapt<PollResponse>());
         }
 
-        public async Task<Result> UpdateAsync(int id, PollRequest poll, CancellationToken cancellation)
+        public async Task<Result> UpdateAsync(int id, PollRequest request, CancellationToken cancellation)
         {
+            var isExistintTitle = await _context.polls.AnyAsync(x => x.Title == request.Title && x.Id != id, cancellationToken: cancellation);
+            if (isExistintTitle)
+            {
+                return Result.Failure<PollResponse>(PollErrors.DuplicatedPollTitle);
+            }
             //var currentPoll = await GetAsync(id, cancellation);
             var currentPoll = await _context.polls.FindAsync(id, cancellation);
             if (currentPoll is null)
                 return Result.Failure(PollErrors.PollNotFound);
 
-            currentPoll.Title = poll.Title;
-            currentPoll.Summary = poll.Summary;
-            currentPoll.IsPublished = poll.IsPublished;
-            currentPoll.StartsAt = poll.StartsAt;
-            currentPoll.EndsAt = poll.EndsAt;
+            currentPoll.Title = request.Title;
+            currentPoll.Summary = request.Summary;
+            currentPoll.IsPublished = request.IsPublished;
+            currentPoll.StartsAt = request.StartsAt;
+            currentPoll.EndsAt = request.EndsAt;
 
             await _context.SaveChangesAsync(cancellation);
 
