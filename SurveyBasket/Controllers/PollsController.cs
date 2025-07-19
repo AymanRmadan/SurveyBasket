@@ -26,15 +26,18 @@ namespace SurveyBasket.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get([FromRoute] int id)
         {
-            var poll = await _pollService.GetAsync(id);
-            // return poll is null ? NotFound() : Ok(poll.MapToPollResponse());
-            if (poll is null)
-            {
-                return NotFound();
-            }
-            // Mapster Mapping
-            var response = poll.Adapt<PollResponse>();
-            return Ok(response);
+            var result = await _pollService.GetAsync(id);
+            //// return poll is null ? NotFound() : Ok(poll.MapToPollResponse());
+            //if (poll is null)
+            //{
+            //    return NotFound();
+            //}
+            //// Mapster Mapping
+            //var response = poll.Adapt<PollResponse>();
+
+            //return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+            return result.IsSuccess ? Ok(result.Value) :
+                 Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
         }
 
         [HttpPost("")]
@@ -66,23 +69,23 @@ namespace SurveyBasket.Controllers
             //var isUpdate = _pollService.Update(id, request.MapToPoll());
 
             // Mapster Map
-            var isUpdate = await _pollService.UpdateAsync(id, request.Adapt<Poll>(), cancellation);
+            var result = await _pollService.UpdateAsync(id, request, cancellation);
 
-            if (!isUpdate)
-                return NotFound();
 
-            return NoContent();
-
+            return result.IsSuccess ? NoContent() : NotFound(result.Error);
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellation)
 
         {
-            var isDeleted = await _pollService.DeleteAsync(id, cancellation);
-            if (!isDeleted)
-                return NotFound();
-            return NoContent();
+            var result = await _pollService.DeleteAsync(id, cancellation);
+            //if (!!result)
+            //    return NotFound();
+            //return NoContent();
+
+            return result.IsSuccess ? NoContent() :
+                 Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
         }
 
 
@@ -90,10 +93,13 @@ namespace SurveyBasket.Controllers
         public async Task<IActionResult> TogglePublish(int id, CancellationToken cancellation)
 
         {
-            var toggle = await _pollService.TogglePublishStatusAsync(id, cancellation);
-            if (!toggle)
-                return NotFound();
-            return NoContent();
+            var result = await _pollService.TogglePublishStatusAsync(id, cancellation);
+            /*  if (!toggle)
+                  return NotFound();
+              return NoContent();*/
+
+            return result.IsSuccess ? NoContent() :
+            Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
         }
 
 
