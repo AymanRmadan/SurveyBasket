@@ -36,8 +36,10 @@ namespace SurveyBasket.Controllers
             //var response = poll.Adapt<PollResponse>();
 
             //return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
-            return result.IsSuccess ? Ok(result.Value) :
-                 Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
+            return result.IsSuccess
+                ? Ok(result.Value)
+                : result.ToProblem();
+
         }
 
         [HttpPost("")]
@@ -72,7 +74,9 @@ namespace SurveyBasket.Controllers
             var result = await _pollService.UpdateAsync(id, request, cancellation);
 
 
-            return result.IsSuccess ? NoContent() : NotFound(result.Error);
+            return result.IsSuccess
+                ? NoContent()
+                : result.ToProblem();
         }
 
         [HttpDelete("{id}")]
@@ -84,22 +88,21 @@ namespace SurveyBasket.Controllers
             //    return NotFound();
             //return NoContent();
 
-            return result.IsSuccess ? NoContent() :
-                 Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
+            return result.IsSuccess
+                ? NoContent()
+                : result.ToProblem();
         }
 
 
         [HttpPut("{id}/togglePublish")]
-        public async Task<IActionResult> TogglePublish(int id, CancellationToken cancellation)
+        public async Task<IActionResult> TogglePublish([FromRoute] int id, CancellationToken cancellation)
 
         {
             var result = await _pollService.TogglePublishStatusAsync(id, cancellation);
-            /*  if (!toggle)
-                  return NotFound();
-              return NoContent();*/
 
-            return result.IsSuccess ? NoContent() :
-            Problem(statusCode: StatusCodes.Status404NotFound, title: result.Error.Code, detail: result.Error.Description);
+            return result.IsSuccess
+                ? NoContent()
+                : result.ToProblem();
         }
 
 
