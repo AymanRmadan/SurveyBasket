@@ -13,10 +13,10 @@ namespace SurveyBasket.Services
         private readonly AppDbContext _context = context;
 
         public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellation) =>
-            await _context.polls.AsNoTracking().ToListAsync(cancellation);
+            await _context.Polls.AsNoTracking().ToListAsync(cancellation);
         public async Task<Result<PollResponse>> GetAsync(int id, CancellationToken cancellation = default)
         {
-            var poll = await _context.polls.FindAsync(id, cancellation);
+            var poll = await _context.Polls.FindAsync(id, cancellation);
 
             return poll is not null ? Result.Success(poll.Adapt<PollResponse>()) : Result.Failure<PollResponse>(PollErrors.PollNotFound);
         }
@@ -25,7 +25,7 @@ namespace SurveyBasket.Services
         /*CancellationToken this is use when i added items and wanted to cancel this item this CancellationToken help to cancel and not saved in database */
         public async Task<Result<PollResponse>> AddAsync(PollRequest request, CancellationToken cancellation)
         {
-            var isExistintTitle = await _context.polls.AnyAsync(x => x.Title == request.Title, cancellationToken: cancellation);
+            var isExistintTitle = await _context.Polls.AnyAsync(x => x.Title == request.Title, cancellationToken: cancellation);
             if (isExistintTitle)
             {
                 return Result.Failure<PollResponse>(PollErrors.DuplicatedPollTitle);
@@ -38,13 +38,13 @@ namespace SurveyBasket.Services
 
         public async Task<Result> UpdateAsync(int id, PollRequest request, CancellationToken cancellation)
         {
-            var isExistintTitle = await _context.polls.AnyAsync(x => x.Title == request.Title && x.Id != id, cancellationToken: cancellation);
+            var isExistintTitle = await _context.Polls.AnyAsync(x => x.Title == request.Title && x.Id != id, cancellationToken: cancellation);
             if (isExistintTitle)
             {
                 return Result.Failure<PollResponse>(PollErrors.DuplicatedPollTitle);
             }
             //var currentPoll = await GetAsync(id, cancellation);
-            var currentPoll = await _context.polls.FindAsync(id, cancellation);
+            var currentPoll = await _context.Polls.FindAsync(id, cancellation);
             if (currentPoll is null)
                 return Result.Failure(PollErrors.PollNotFound);
 
@@ -62,7 +62,7 @@ namespace SurveyBasket.Services
 
         public async Task<Result> DeleteAsync(int id, CancellationToken cancellation)
         {
-            var poll = await _context.polls.FindAsync(id, cancellation);
+            var poll = await _context.Polls.FindAsync(id, cancellation);
             if (poll is null) return Result.Failure(PollErrors.PollNotFound);
 
             _context.Remove(poll);
@@ -73,7 +73,7 @@ namespace SurveyBasket.Services
         public async Task<Result> TogglePublishStatusAsync(int id, CancellationToken cancellation = default)
         {
             // var poll = await GetAsync(id, cancellation);
-            var poll = await _context.polls.FindAsync(id, cancellation);
+            var poll = await _context.Polls.FindAsync(id, cancellation);
             if (poll is null)
                 return Result.Failure(PollErrors.PollNotFound);
 

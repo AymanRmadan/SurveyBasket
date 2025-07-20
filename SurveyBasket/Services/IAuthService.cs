@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.Services
+﻿using SurveyBasket.Contracts.Questions.Responses;
+
+namespace SurveyBasket.Services
 {
     public interface IAuthService
     {

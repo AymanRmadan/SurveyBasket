@@ -1,4 +1,5 @@
 ﻿using Mapster;
+using SurveyBasket.Contracts.Questions;
 using SurveyBasket.Contracts.Responses;
 
 namespace SurveyBasket.Mapp
@@ -11,6 +12,14 @@ namespace SurveyBasket.Mapp
             // var config = new TypeAdapterConfig();
             config.NewConfig<Poll, PollResponse>()
                 .Map(dest => dest.Summary, src => src.Summary);
+
+            /* config.NewConfig<QuestionRequest, Question>()
+                 .Ignore(nameof(Question.Answers));*/
+
+            config.NewConfig<QuestionRequest, Question>()
+                .Map(dest => dest.Answers, src => src.Answers.Select(answer => new Answer { Content = answer }));
+
+
         }
     }
 }
