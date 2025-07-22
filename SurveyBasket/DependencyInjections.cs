@@ -42,10 +42,12 @@ namespace SurveyBasket
             services.AddDataBaseCofig(configuration);
             services.AddAuthConfig(configuration);
 
+
+            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IPollService, PollService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IVoteServics, VoteService>();
+            services.AddScoped<IResultService, ResultService>();
 
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
