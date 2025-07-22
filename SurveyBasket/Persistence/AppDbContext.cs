@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
-using System.Security.Claims;
 
 namespace SurveyBasket.Persistence
 {
@@ -41,7 +40,7 @@ namespace SurveyBasket.Persistence
             var entries = ChangeTracker.Entries<AuditableEntity>();
             foreach (var entityEntry in entries)
             {
-                var currentUserId = _httpContextAccessor.HttpContext?.User.FindFirstValue(ClaimTypes.NameIdentifier)!;
+                var currentUserId = _httpContextAccessor.HttpContext?.User.GetUserId();
 
 
                 if (entityEntry.State == EntityState.Added)

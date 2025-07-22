@@ -1,5 +1,6 @@
 ﻿using Mapster;
 using Microsoft.EntityFrameworkCore;
+using SurveyBasket.Contracts.Answers.Responses;
 using SurveyBasket.Contracts.Questions;
 using SurveyBasket.Contracts.Questions.Responses;
 using SurveyBasket.Errors;
@@ -48,6 +49,36 @@ namespace SurveyBasket.Services
                .ProjectToType<QuestionResponse>()
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
+
+            return Result.Success<IEnumerable<QuestionResponse>>(questions);
+        }
+
+        public async Task<Result<IEnumerable<QuestionResponse>>> GetAvailableAsync(int pollId, string userId, CancellationToken cancellationToken = default)
+        {
+            // Do User vote on this poll or no
+            var hasVote = await _context.Votes.AnyAsync(v => v.PollId == pollId && v.UserId == userId, cancellationToken: cancellationToken);
+            if (hasVote)
+            {
+                return Result.Failure<IEnumerable<QuestionResponse>>(VoteErrors.DuplicatedVote);
+            }
+
+            // Do User vote on this poll or no
+            var pollIsExist = await _context.Polls.AnyAsync(p => p.Id == pollId && p.IsPublished && p.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && p.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow), cancellationToken: cancellationToken);
+            if (!pollIsExist)
+            {
+                return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
+            }
+
+            var questions = await _context.Questions
+                .Where(q => q.PollId == pollId && q.IsActive)
+                .Include(q => q.Answers)
+                .Select(q => new QuestionResponse
+                (
+                    q.Id,
+                    q.Content,
+                    q.Answers.Where(a => a.IsActive).Select(a => new AnswerResponse(a.Id, a.Content))
+                )).AsNoTracking()
+                  .ToListAsync(cancellationToken);
 
             return Result.Success<IEnumerable<QuestionResponse>>(questions);
         }

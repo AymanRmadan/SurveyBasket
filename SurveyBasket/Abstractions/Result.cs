@@ -23,7 +23,8 @@ public class Result
 
 public class Result<TValue> : Result
 {
-    public TValue? _value { get; set; }
+    private readonly TValue? _value;
+
     public Result(TValue value, bool isSuccess, Error error) : base(isSuccess, error)
     {
         _value = value;
