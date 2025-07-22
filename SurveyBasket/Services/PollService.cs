@@ -12,8 +12,21 @@ namespace SurveyBasket.Services
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<IEnumerable<Poll>> GetAllAsync(CancellationToken cancellation) =>
-            await _context.Polls.AsNoTracking().ToListAsync(cancellation);
+        public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellation) =>
+            await _context.Polls
+                 .AsNoTracking()
+                 .ProjectToType<PollResponse>()
+                 .ToListAsync(cancellation);
+
+
+        public async Task<IEnumerable<PollResponse>> GetCurrentAsync(CancellationToken cancellation = default) =>
+             await _context.Polls
+                  .Where(poll => poll.IsPublished && poll.StartsAt <= DateOnly.FromDateTime(DateTime.UtcNow) && poll.EndsAt >= DateOnly.FromDateTime(DateTime.UtcNow))
+                  .AsNoTracking()
+                  .ProjectToType<PollResponse>()
+                  .ToListAsync(cancellation);
+
+
         public async Task<Result<PollResponse>> GetAsync(int id, CancellationToken cancellation = default)
         {
             var poll = await _context.Polls.FindAsync(id, cancellation);

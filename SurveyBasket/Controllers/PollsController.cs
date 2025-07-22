@@ -1,7 +1,4 @@
-﻿using Mapster;
-using Microsoft.AspNetCore.Authorization;
-using SurveyBasket.Contracts.Requests;
-using SurveyBasket.Contracts.Responses;
+﻿using SurveyBasket.Contracts.Requests;
 
 namespace SurveyBasket.Controllers
 {
@@ -14,12 +11,16 @@ namespace SurveyBasket.Controllers
     {
         private readonly IPollService _pollService = pollService;
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("")]
+        public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var polls = await pollService.GetAllAsync();
-            var response = polls.Adapt<IEnumerable<PollResponse>>();
-            return Ok(response);
+            return Ok(await pollService.GetAllAsync(cancellationToken));
+        }
+
+        [HttpGet("current")]
+        public async Task<IActionResult> GetCurrnet(CancellationToken cancellationToken)
+        {
+            return Ok(await pollService.GetCurrentAsync(cancellationToken));
         }
 
 
