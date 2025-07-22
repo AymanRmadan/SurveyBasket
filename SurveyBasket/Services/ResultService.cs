@@ -26,5 +26,27 @@ namespace SurveyBasket.Services
                  ? Result.Failure<PollVotesResponse>(PollErrors.PollNotFound)
                  : Result.Success(pollVotes);
         }
+
+
+        public async Task<Result<IEnumerable<VotesPerDayResponse>>> GetVotesPerDayAsync(int pollId, CancellationToken cancellationToken = default)
+        {
+
+            var pollIsExists = await _context.Polls.AnyAsync(p => p.Id == pollId, cancellationToken: cancellationToken);
+            if (!pollIsExists)
+            {
+                return Result.Failure<IEnumerable<VotesPerDayResponse>>(PollErrors.PollNotFound);
+            }
+
+            var votesPerDay = await _context.Votes.Where(vote => vote.PollId == pollId)
+                     .GroupBy(vote => new { VoteDate = DateOnly.FromDateTime(vote.SubmittedOn) })
+                     .Select(group => new VotesPerDayResponse(
+                            group.Key.VoteDate,
+                            group.Count()
+                         )).ToListAsync(cancellationToken);
+
+            return Result.Success<IEnumerable<VotesPerDayResponse>>(votesPerDay);
+
+
+        }
     }
 }
