@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SurveyBasket.Contracts.Result;
+using SurveyBasket.Contracts.Result.VotesPerQuestion;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 
@@ -48,5 +49,30 @@ namespace SurveyBasket.Services
 
 
         }
+
+        public async Task<Result<IEnumerable<VotesPerQuestionResponse>>> GetVotesPerQuestionAsync(int pollId, CancellationToken cancellationToken = default)
+        {
+
+            var pollIsExists = await _context.Polls.AnyAsync(p => p.Id == pollId, cancellationToken: cancellationToken);
+            if (!pollIsExists)
+            {
+                return Result.Failure<IEnumerable<VotesPerQuestionResponse>>(PollErrors.PollNotFound);
+            }
+
+            var votesPerQuestion = await _context.VoteAnswers.Where(va => va.Vote.PollId == pollId)
+                     .Select(va => new VotesPerQuestionResponse(
+                         va.Question.Content,
+                         va.Question.Votes.GroupBy(x => new { AnswerId = x.Answer.Id, AnswerContent = x.Answer.Content })
+                            .Select(group => new VotesPerAnswerResponse(
+                                group.Key.AnswerContent,
+                                group.Count()
+                                ))
+                            )).ToListAsync(cancellationToken);
+
+            return Result.Success<IEnumerable<VotesPerQuestionResponse>>(votesPerQuestion);
+
+
+        }
+
     }
 }

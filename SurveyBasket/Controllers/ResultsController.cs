@@ -23,5 +23,13 @@
 
             return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
         }
+
+        [HttpGet("votes-per-q")]
+        public async Task<IActionResult> VotesPerQuestion(int pollId, CancellationToken cancellationToken)
+        {
+            var result = await _resultService.GetVotesPerQuestionAsync(pollId, cancellationToken);
+
+            return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+        }
     }
 }

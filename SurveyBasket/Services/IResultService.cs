@@ -1,4 +1,5 @@
 ﻿using SurveyBasket.Contracts.Result;
+using SurveyBasket.Contracts.Result.VotesPerQuestion;
 
 namespace SurveyBasket.Services
 {
@@ -6,6 +7,8 @@ namespace SurveyBasket.Services
     {
         Task<Result<PollVotesResponse>> GetPollVotesAsync(int pollId, CancellationToken cancellationToken = default);
         Task<Result<IEnumerable<VotesPerDayResponse>>> GetVotesPerDayAsync(int pollId, CancellationToken cancellationToken = default);
+        Task<Result<IEnumerable<VotesPerQuestionResponse>>> GetVotesPerQuestionAsync(int pollId, CancellationToken cancellationToken = default);
+
 
 
     }
