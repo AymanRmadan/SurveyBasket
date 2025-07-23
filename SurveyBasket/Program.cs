@@ -1,3 +1,4 @@
+using Serilog;
 using SurveyBasket;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +13,14 @@ builder.Services.AddControllers();
 
 builder.Services.AddDependencies(builder.Configuration);
 
+// Add Serilog or Logger To save errors specify app
+builder.Host.UseSerilog((context, configuration) =>
+{
+    //To read from appSetting
+    configuration.ReadFrom.Configuration(context.Configuration);
+
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -20,6 +29,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
