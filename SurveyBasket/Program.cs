@@ -15,11 +15,11 @@ builder.Services.AddDependencies(builder.Configuration);
 
 // Add Serilog or Logger To save errors specify app
 builder.Host.UseSerilog((context, configuration) =>
-{
-    //To read from appSetting
+{    //To read from appSetting
     configuration.ReadFrom.Configuration(context.Configuration);
-
 });
+
+
 
 var app = builder.Build();
 
@@ -37,6 +37,10 @@ app.UseHttpsRedirection();
 app.UseCors();
 
 app.UseAuthorization();
+
+//For Caching
+//app.UseResponseCaching();
+//app.UseOutputCache();
 
 app.MapControllers();
 app.UseExceptionHandler();

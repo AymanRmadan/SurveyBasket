@@ -19,6 +19,15 @@ namespace SurveyBasket
     {
         public static IServiceCollection AddDependencies(this IServiceCollection services, IConfiguration configuration)
         {
+            //For Caching Types
+            //services.AddResponseCaching();
+            //services.AddOutputCache();
+            //services.AddDistributedMemoryCache();
+            services.AddHybridCache();
+
+
+
+
             var allowedOrigins = configuration.GetSection("AllowedOrigins").Get<string[]>();
 
             /*  services.AddCors(options =>
@@ -48,6 +57,7 @@ namespace SurveyBasket
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IVoteServics, VoteService>();
             services.AddScoped<IResultService, ResultService>();
+            // services.AddScoped<ICacheService, CacheService>();
 
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
