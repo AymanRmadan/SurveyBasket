@@ -3,9 +3,9 @@ using SurveyBasket.Abstractions.Consts;
 
 namespace SurveyBasket.Contracts.Authentications.Register
 {
-    public class RegisterRequestValidator : AbstractValidator<RegisterRequest>
+    public class AddRegisterRequestValidator : AbstractValidator<AddRegisterRequest>
     {
-        public RegisterRequestValidator()
+        public AddRegisterRequestValidator()
         {
             RuleFor(r => r.Email)
                 .NotEmpty()

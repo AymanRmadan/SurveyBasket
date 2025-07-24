@@ -3,9 +3,9 @@ using SurveyBasket.Contracts.Logins.Request;
 
 namespace SurveyBasket.Contracts.Validations
 {
-    public class LoginRequestValidator : AbstractValidator<LoginRequest>
+    public class AddLoginRequestValidator : AbstractValidator<AddLoginRequest>
     {
-        public LoginRequestValidator()
+        public AddLoginRequestValidator()
         {
             RuleFor(r => r.email).NotEmpty().EmailAddress();
             RuleFor(r => r.password).NotEmpty();

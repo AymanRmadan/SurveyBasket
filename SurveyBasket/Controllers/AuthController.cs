@@ -1,6 +1,7 @@
 ﻿using SurveyBasket.Contracts.Authentications.Auth.Requests;
 using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
+using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 using SurveyBasket.Contracts.Logins.Request;
 
 
@@ -15,7 +16,7 @@ namespace SurveyBasket.Controllers
         private readonly ILogger<AuthController> _logger = logger;
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellation)
+        public async Task<IActionResult> Register([FromBody] AddRegisterRequest request, CancellationToken cancellation)
         {
             var result = await _authService.RegisterAsync(request, cancellation);
             return result.IsSuccess
@@ -24,7 +25,7 @@ namespace SurveyBasket.Controllers
         }
 
         [HttpPost("")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellation)
+        public async Task<IActionResult> Login([FromBody] AddLoginRequest request, CancellationToken cancellation)
         {
             _logger.LogInformation("Logging with email : {email} and password : {password}", request.email, request.password);
             var authResult = await _authService.GetTokenAsync(request.email, request.password, cancellation);
@@ -39,6 +40,15 @@ namespace SurveyBasket.Controllers
         public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailRequest request)
         {
             var result = await _authService.ConfirmEmailAsync(request);
+            return result.IsSuccess
+                ? Ok()
+                : result.ToProblem();
+        }
+
+        [HttpPost("resend-confirmation-email")]
+        public async Task<IActionResult> ResendConfirmationEmail([FromBody] AddResendConfirmationEmailRequest request)
+        {
+            var result = await _authService.ResendConfirmationEmailAsync(request);
             return result.IsSuccess
                 ? Ok()
                 : result.ToProblem();

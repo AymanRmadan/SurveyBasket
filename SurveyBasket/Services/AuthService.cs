@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using SurveyBasket.Authantication;
 using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
+using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 using SurveyBasket.Errors;
+using SurveyBasket.Helpers;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -13,13 +16,17 @@ namespace SurveyBasket.Services
     public class AuthService(UserManager<ApplicationUser> userManager
         , SignInManager<ApplicationUser> signInManager
         , IJwtProvider jwtProvider
-        , ILogger<AuthService> logger) : IAuthService
+        , ILogger<AuthService> logger
+        , IEmailSender emailSender
+        , IHttpContextAccessor httpContextAccessor) : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
         private readonly IJwtProvider _jwtProvider = jwtProvider;
         private readonly ILogger<AuthService> _logger = logger;
         private readonly int _refreshTokenExpirtDays = 14;
+        private readonly IEmailSender _emailSender = emailSender;
+        private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 
         public async Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellation = default)
         {
@@ -129,7 +136,8 @@ namespace SurveyBasket.Services
         }
 
 
-        public async Task<Result> RegisterAsync(RegisterRequest request, CancellationToken cancellationToken = default)
+
+        public async Task<Result> RegisterAsync(AddRegisterRequest request, CancellationToken cancellationToken = default)
         {
             var emailIsExist = await _userManager.Users.AnyAsync(user => user.Email == request.Email, cancellationToken);
             if (emailIsExist)
@@ -156,6 +164,8 @@ namespace SurveyBasket.Services
 
                 _logger.LogInformation("Confirmation code : {code}", code);
 
+                await SendConfirmationEmail(user, code);
+
                 return Result.Success();
             }
 
@@ -163,6 +173,7 @@ namespace SurveyBasket.Services
             var error = result.Errors.First();
             return Result.Failure<AuthResponse>(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
         }
+
 
 
 
@@ -201,8 +212,52 @@ namespace SurveyBasket.Services
             return Result.Failure(new Error(error.Code, error.Description, StatusCodes.Status400BadRequest));
         }
 
+
+
+        public async Task<Result> ResendConfirmationEmailAsync(AddResendConfirmationEmailRequest request)
+        {
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                return Result.Success();
+
+            }
+
+            if (user.EmailConfirmed)
+            {
+                return Result.Failure(UserErrors.DuplicatedConfirmation);
+
+            }
+            var code = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+            code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
+
+            _logger.LogInformation("Confirmation code : {code}", code);
+
+            //TODO Send Email
+            await SendConfirmationEmail(user, code);
+
+            return Result.Success();
+        }
         private static string GenerateRefreshToken() =>
          Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
+
+
+        private async Task SendConfirmationEmail(ApplicationUser user, string code)
+        {
+            var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
+
+            var emailBody = EmailBodyBuilder.GenerateEmailBody("EmailConfirmation",
+                templateModel: new Dictionary<string, string>
+                {
+                { "{{name}}", user.FirstName },
+                    { "{{action_url}}", $"{origin}/auth/emailConfirmation?userId={user.Id}&code={code}" }
+                }
+            );
+
+            await _emailSender.SendEmailAsync(user.Email!, "✅ Survey Basket: Email Confirmation", emailBody);
+        }
+
+
 
     }
 }

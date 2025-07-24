@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Contracts.Authentications.Register
 {
-    public record RegisterRequest(
+    public record AddRegisterRequest(
         string Email,
         string Password,
         string FirstName,
