@@ -11,14 +11,15 @@ namespace SurveyBasket.Contracts.Authentications.Register
                 .NotEmpty()
                 .EmailAddress();
 
+
             RuleFor(r => r.Password)
-                .NotEmpty();
+                .NotEmpty()
+                .Matches(RegexPatterns.Password)
+                .WithMessage("Password should be at least 8 digits and should contains Lowercase, NonAlphanumeric and Uppercase");
 
             RuleFor(r => r.FirstName)
                 .NotEmpty()
-                .Length(3, 100)
-                .Matches(RegexPatterns.Password)
-                .WithMessage("Password should be at least 8 digits and should contains Lowercase, NonAlphanumeric and Uppercase");
+                .Length(3, 100);
 
             RuleFor(r => r.LastName)
                 .NotEmpty()

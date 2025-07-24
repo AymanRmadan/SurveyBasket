@@ -109,7 +109,9 @@ namespace SurveyBasket
         private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddIdentity<ApplicationUser, IdentityRole>().
-        AddEntityFrameworkStores<AppDbContext>();
+                 AddEntityFrameworkStores<AppDbContext>()
+                .AddDefaultTokenProviders();
+
             services.AddSingleton<IJwtProvider, JwtProvider>();
 
             //  services.Configure<JwtOptions>(configuration.GetSection("Jwt"));
@@ -146,7 +148,7 @@ namespace SurveyBasket
             services.Configure<IdentityOptions>(options =>
             {
                 options.Password.RequiredLength = 8;
-                //options.SignIn.RequireConfirmedEmail = true;
+                options.SignIn.RequireConfirmedEmail = true;
                 options.User.RequireUniqueEmail = true;
             });
 
