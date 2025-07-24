@@ -1,6 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Identity;
 using SurveyBasket.Authantication;
+using SurveyBasket.Contracts.Authentications.Auth.Responses;
 using SurveyBasket.Contracts.Questions.Responses;
 using SurveyBasket.Errors;
 using System.Security.Cryptography;

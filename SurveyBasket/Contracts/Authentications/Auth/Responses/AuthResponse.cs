@@ -1,4 +1,4 @@
-﻿namespace SurveyBasket.Contracts.Authentications.Responses
+﻿namespace SurveyBasket.Contracts.Authentications.Auth.Responses
 {
     public record AuthResponse(
         string Id,

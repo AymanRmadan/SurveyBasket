@@ -1,4 +1,4 @@
-﻿using SurveyBasket.Contracts.Authentications.Requests;
+﻿using SurveyBasket.Contracts.Authentications.Auth.Requests;
 using SurveyBasket.Contracts.Logins.Request;
 
 

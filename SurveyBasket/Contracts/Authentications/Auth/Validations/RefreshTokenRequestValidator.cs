@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
-using SurveyBasket.Contracts.Authentications.Requests;
+using SurveyBasket.Contracts.Authentications.Auth.Requests;
 
-namespace SurveyBasket.Contracts.Authentications.Validations
+namespace SurveyBasket.Contracts.Authentications.Auth.Validations
 {
     public class RefreshTokenRequestValidator : AbstractValidator<RefreshTokenRequest>
     {

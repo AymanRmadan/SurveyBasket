@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Contracts.Questions.Responses;
+﻿using SurveyBasket.Contracts.Authentications.Auth.Responses;
+using SurveyBasket.Contracts.Questions.Responses;
 
 namespace SurveyBasket.Services
 {
