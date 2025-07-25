@@ -100,11 +100,36 @@ namespace SurveyBasket
                     Version = "v1"
                 });
 
-                // Optional: Add custom filters here
-                // options.OperationFilter<YourCustomFilter>();
+                // 🔐 Add JWT Authentication to Swagger
+                options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.Http,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "Enter 'Bearer' followed by your JWT token (e.g., Bearer eyJhbGciOi...)."
+                });
+
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+        {
+            {
+                new OpenApiSecurityScheme
+                {
+                    Reference = new OpenApiReference
+                    {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = "Bearer"
+                    }
+                },
+                Array.Empty<string>()
+            }
+        });
             });
+
             return services;
         }
+
 
         private static IServiceCollection AddFluentValidationConfig(this IServiceCollection services)
         {
