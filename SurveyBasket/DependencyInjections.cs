@@ -1,4 +1,5 @@
-﻿using FluentValidation;
+﻿using Asp.Versioning;
+using FluentValidation;
 using FluentValidation.AspNetCore;
 using Mapster;
 using MapsterMapper;
@@ -70,6 +71,26 @@ namespace SurveyBasket
             services.AddHttpContextAccessor();
 
             services.Configure<MailSettings>(configuration.GetSection(nameof(MailSettings)));
+
+
+            // API Versions Configurations
+            #region API Versions Configurations
+            services.AddApiVersioning(options =>
+              {
+                  options.DefaultApiVersion = new ApiVersion(1);
+                  options.AssumeDefaultVersionWhenUnspecified = true;
+                  options.ReportApiVersions = true;
+
+                  options.ApiVersionReader = new HeaderApiVersionReader("x-api-version");
+              })
+             .AddApiExplorer(options =>
+             {
+                 options.GroupNameFormat = "'v'V";
+                 options.SubstituteApiVersionInUrl = true;
+             });
+            #endregion
+
+
             return services;
         }
 

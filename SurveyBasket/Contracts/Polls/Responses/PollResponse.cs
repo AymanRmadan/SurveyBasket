@@ -9,4 +9,11 @@
          DateOnly EndsAt
         );
 
+    public record PollResponseV2(
+       int Id,
+       string Title,
+       string Summary,
+        DateOnly StartsAt
+       );
+
 }

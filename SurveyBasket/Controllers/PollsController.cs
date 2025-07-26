@@ -1,8 +1,11 @@
-﻿using SurveyBasket.Contracts.Requests;
+﻿using Asp.Versioning;
+using SurveyBasket.Contracts.Requests;
 
 namespace SurveyBasket.Controllers
 {
 
+    [ApiVersion(1, Deprecated = true)]
+    [ApiVersion(2)]
     [Route("api/[controller]")]
     [ApiController]
 
@@ -17,10 +20,21 @@ namespace SurveyBasket.Controllers
             return Ok(await pollService.GetAllAsync(cancellationToken));
         }
 
+
+        [MapToApiVersion(1)]
         [HttpGet("current")]
-        public async Task<IActionResult> GetCurrnet(CancellationToken cancellationToken)
+        [Authorize()]
+        public async Task<IActionResult> GetCurrentV1(CancellationToken cancellationToken)
         {
-            return Ok(await pollService.GetCurrentAsync(cancellationToken));
+            return Ok(await _pollService.GetCurrentAsyncV1(cancellationToken));
+        }
+
+        [MapToApiVersion(2)]
+        [HttpGet("current")]
+        [Authorize()]
+        public async Task<IActionResult> GetCurrentV2(CancellationToken cancellationToken)
+        {
+            return Ok(await _pollService.GetCurrentAsyncV2(cancellationToken));
         }
 
 
