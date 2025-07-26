@@ -14,7 +14,7 @@ using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 using SurveyBasket.Services.Authentication;
 using SurveyBasket.Services.Polls;
-using SurveyBasket.Services.Question;
+using SurveyBasket.Services.Questions;
 using SurveyBasket.Settings;
 using System.Reflection;
 using System.Text;

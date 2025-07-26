@@ -7,7 +7,7 @@ using SurveyBasket.Contracts.Questions.Responses;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 
-namespace SurveyBasket.Services.Question
+namespace SurveyBasket.Services.Questions
 {
     public class QuestionService : IQuestionService
     {
