@@ -1,7 +1,7 @@
 ﻿using SurveyBasket.Contracts.Questions;
 using SurveyBasket.Contracts.Questions.Responses;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Question
 {
     public interface IQuestionService
     {

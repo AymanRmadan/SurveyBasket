@@ -1,7 +1,7 @@
 ﻿using SurveyBasket.Contracts.Requests;
 using SurveyBasket.Contracts.Responses;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Polls
 {
     public interface IPollService
     {

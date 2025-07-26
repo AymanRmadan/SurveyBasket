@@ -2,7 +2,7 @@
 using SurveyBasket.Contracts.Authentications.Register;
 using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Authentication
 {
     public interface IAuthService
     {

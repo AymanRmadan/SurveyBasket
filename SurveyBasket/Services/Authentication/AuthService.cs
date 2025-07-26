@@ -11,7 +11,7 @@ using SurveyBasket.Helpers;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Authentication
 {
     public class AuthService(UserManager<ApplicationUser> userManager
         , SignInManager<ApplicationUser> signInManager

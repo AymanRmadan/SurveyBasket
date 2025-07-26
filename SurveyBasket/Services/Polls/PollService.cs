@@ -6,7 +6,7 @@ using SurveyBasket.Contracts.Responses;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Polls
 {
     public class PollService(AppDbContext context) : IPollService
     {
