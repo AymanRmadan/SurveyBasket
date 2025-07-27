@@ -15,7 +15,8 @@ builder.Services.AddDependencies(builder.Configuration);
 
 // Add Serilog or Logger To save errors specify app
 builder.Host.UseSerilog((context, configuration) =>
-{    //To read from appSetting
+{
+    //To read from appSetting
     configuration.ReadFrom.Configuration(context.Configuration);
 });
 
