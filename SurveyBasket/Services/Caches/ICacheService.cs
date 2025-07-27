@@ -1,4 +1,4 @@
-﻿namespace SurveyBasket.Services
+﻿namespace SurveyBasket.Services.Caches
 {
 
     // This service when i use Distributed cache 

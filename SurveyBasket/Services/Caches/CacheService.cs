@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Caching.Distributed;
 using System.Text.Json;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Caches
 {
     public class CacheService(IDistributedCache distributedCache) : ICacheService
     {
@@ -12,7 +12,7 @@ namespace SurveyBasket.Services
         {
             var cachedValue = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
 
-            return String.IsNullOrEmpty(cachedValue)
+            return string.IsNullOrEmpty(cachedValue)
                 ? null
                 : JsonSerializer.Deserialize<T>(cachedValue);
         }

@@ -1,7 +1,7 @@
 ﻿using SurveyBasket.Contracts.Result;
 using SurveyBasket.Contracts.Result.VotesPerQuestion;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Results
 {
     public interface IResultService
     {

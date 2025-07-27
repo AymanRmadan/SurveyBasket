@@ -4,7 +4,7 @@ using SurveyBasket.Contracts.Result.VotesPerQuestion;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Results
 {
     public class ResultService(AppDbContext context) : IResultService
     {

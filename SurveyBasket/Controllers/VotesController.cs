@@ -1,5 +1,6 @@
 ﻿using SurveyBasket.Contracts.Requests;
 using SurveyBasket.Services.Questions;
+using SurveyBasket.Services.Votes;
 
 namespace SurveyBasket.Controllers
 {

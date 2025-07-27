@@ -1,4 +1,6 @@
-﻿namespace SurveyBasket.Controllers
+﻿using SurveyBasket.Services.Results;
+
+namespace SurveyBasket.Controllers
 {
     [Route("api/polls/{pollId}/[controller]")]
     [ApiController]
