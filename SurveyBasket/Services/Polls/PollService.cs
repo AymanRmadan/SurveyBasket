@@ -1,4 +1,5 @@
 ﻿
+using Hangfire;
 using Mapster;
 using Microsoft.EntityFrameworkCore;
 using SurveyBasket.Contracts.Requests;
@@ -8,9 +9,11 @@ using SurveyBasket.Persistence;
 
 namespace SurveyBasket.Services.Polls
 {
-    public class PollService(AppDbContext context) : IPollService
+    public class PollService(AppDbContext context, INotificationService notificationService) : IPollService
     {
         private readonly AppDbContext _context = context;
+        private readonly INotificationService _notificationService = notificationService;
+
 
         public async Task<IEnumerable<PollResponse>> GetAllAsync(CancellationToken cancellation) =>
             await _context.Polls
@@ -100,6 +103,10 @@ namespace SurveyBasket.Services.Polls
             poll.IsPublished = !poll.IsPublished;
 
             await _context.SaveChangesAsync(cancellation);
+
+            // Use background job here
+            if (poll.IsPublished && poll.StartsAt == DateOnly.FromDateTime(DateTime.UtcNow))
+                BackgroundJob.Enqueue(() => _notificationService.SendNewPollsNotification(poll.Id));
 
 
             return Result.Success();
