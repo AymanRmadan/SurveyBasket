@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Hangfire;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -164,7 +165,11 @@ namespace SurveyBasket.Services.Authentication
 
                 _logger.LogInformation("Confirmation code : {code}", code);
 
-                await SendConfirmationEmail(user, code);
+
+                //Use Background Job
+                // this task will impelement in background
+                BackgroundJob.Enqueue(() => SendConfirmationEmail(user, code));
+                // await SendConfirmationEmail(user, code);
 
                 return Result.Success();
             }
@@ -234,7 +239,10 @@ namespace SurveyBasket.Services.Authentication
             _logger.LogInformation("Confirmation code : {code}", code);
 
             //TODO Send Email
-            await SendConfirmationEmail(user, code);
+            //Use Background Job
+            // this task will impelement in background
+            BackgroundJob.Enqueue(() => SendConfirmationEmail(user, code));
+            // await SendConfirmationEmail(user, code);
 
             return Result.Success();
         }
@@ -242,7 +250,7 @@ namespace SurveyBasket.Services.Authentication
          Convert.ToBase64String(RandomNumberGenerator.GetBytes(64));
 
 
-        private async Task SendConfirmationEmail(ApplicationUser user, string code)
+        public async Task SendConfirmationEmail(ApplicationUser user, string code)
         {
             var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
 
