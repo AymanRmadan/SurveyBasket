@@ -1,4 +1,5 @@
 using Hangfire;
+using HangfireBasicAuthenticationFilter;
 using Serilog;
 using SurveyBasket;
 
@@ -36,7 +37,18 @@ app.UseSerilogRequestLogging();
 
 app.UseHttpsRedirection();
 
-app.UseHangfireDashboard("/jobs");
+app.UseHangfireDashboard("/jobs", new DashboardOptions
+{
+    Authorization =
+    [
+        new HangfireCustomBasicAuthenticationFilter
+        {
+            User = app.Configuration.GetValue<string>("HangfireSitting:Username"),
+            Pass = app.Configuration.GetValue<string>("HangfireSitting:Password")
+        }
+    ],
+    DashboardTitle = "Survey Basket Dashboard"
+});
 
 app.UseCors();
 
