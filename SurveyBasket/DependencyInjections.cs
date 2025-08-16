@@ -1,6 +1,7 @@
 ﻿using Asp.Versioning;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -94,6 +95,9 @@ namespace SurveyBasket
                  options.SubstituteApiVersionInUrl = true;
              });
             #endregion
+
+
+            services.AddBackgroundJobsConfig(configuration);
 
 
             return services;
@@ -212,6 +216,24 @@ namespace SurveyBasket
             });
 
 
+
+
+            return services;
+        }
+
+
+        private static IServiceCollection AddBackgroundJobsConfig(this IServiceCollection services, IConfiguration configuration)
+        {
+
+
+            // Add Hangfire services.
+            services.AddHangfire(config => config
+                .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+                .UseSimpleAssemblyNameTypeSerializer()
+                .UseRecommendedSerializerSettings()
+                .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
+
+            services.AddHangfireServer();
 
 
             return services;
