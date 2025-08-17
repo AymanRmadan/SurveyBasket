@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Contracts.Authentications.Emails;
+﻿using SurveyBasket.Contracts.Authentication;
+using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
 using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 
@@ -12,9 +13,15 @@ namespace SurveyBasket.Services.Authentication
 
         Task<Result> RegisterAsync(AddRegisterRequest request, CancellationToken cancellationToken = default);
 
+
         Task<Result> ConfirmEmailAsync(ConfirmEmailRequest request);
 
         Task<Result> ResendConfirmationEmailAsync(AddResendConfirmationEmailRequest request);
+
+
+        Task<Result> SendResetPasswordCodeAsync(string email);
+        Task<Result> ResetPasswordAsync(ResetPasswordRequest request);
+
 
     }
 }

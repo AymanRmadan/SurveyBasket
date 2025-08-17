@@ -1,4 +1,5 @@
-﻿using SurveyBasket.Contracts.Authentications.Auth.Requests;
+﻿using SurveyBasket.Contracts.Authentication;
+using SurveyBasket.Contracts.Authentications.Auth.Requests;
 using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
 using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
@@ -73,6 +74,23 @@ namespace SurveyBasket.Controllers
             return revokedResult.IsSuccess
                 ? Ok()
                 : revokedResult.ToProblem();
+        }
+
+        [HttpPost("forget-password")]
+        public async Task<IActionResult> ForgetPassword([FromBody] ForgetPasswordRequest request)
+        {
+            var result = await _authService.SendResetPasswordCodeAsync(request.Email);
+
+            return result.IsSuccess ? Ok() : result.ToProblem();
+        }
+
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+        {
+            var result = await _authService.ResetPasswordAsync(request);
+
+            return result.IsSuccess ? Ok() : result.ToProblem();
         }
 
 

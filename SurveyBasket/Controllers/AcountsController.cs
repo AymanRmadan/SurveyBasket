@@ -1,6 +1,6 @@
 ﻿using SurveyBasket.Contracts.Users.Requests;
 
-namespace SurveyBasket.Contracts;
+namespace SurveyBasket.Controllers;
 // [Route("api/[controller]")]
 [Route("me")]
 [ApiController]
@@ -20,8 +20,15 @@ public class AcountsController(IUserService userService) : ControllerBase
     [HttpPut("profile")]
     public async Task<IActionResult> Profile([FromBody] UpdateProfileRequest request)
     {
-        var result = await _userService.UpdateProfileAsync(User.GetUserId()!, request);
+        await _userService.UpdateProfileAsync(User.GetUserId()!, request);
         return NoContent();
+    }
+
+    [HttpPut("change-pass")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        var result = await _userService.ChangePasswordAsync(User.GetUserId()!, request);
+        return result.IsSuccess ? NoContent() : result.ToProblem();
     }
 
 }
