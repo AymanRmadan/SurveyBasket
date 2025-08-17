@@ -27,10 +27,20 @@ namespace SurveyBasket.Services
 
         public async Task<Result> UpdateProfileAsync(string userId, UpdateProfileRequest request)
         {
-            var user = await _userManager.FindByIdAsync(userId);
-            user = request.Adapt(user);
+            //var user = await _userManager.FindByIdAsync(userId);
 
-            await _userManager.UpdateAsync(user!);
+            //user = request.Adapt(user);
+
+            //await _userManager.UpdateAsync(user!);
+
+            await _userManager.Users
+                .Where(x => x.Id == userId)
+                .ExecuteUpdateAsync(setters =>
+                    setters
+                        .SetProperty(x => x.FirstName, request.FirstName)
+                        .SetProperty(x => x.LastName, request.LastName)
+                );
+
             return Result.Success();
 
         }
