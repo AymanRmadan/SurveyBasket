@@ -70,6 +70,7 @@ namespace SurveyBasket
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IVoteServics, VoteService>();
             services.AddScoped<IResultService, ResultService>();
+            services.AddScoped<IUserService, UserService>();
             // services.AddScoped<ICacheService, CacheService>();
 
 
