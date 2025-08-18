@@ -5,7 +5,7 @@ using System.Reflection;
 namespace SurveyBasket.Persistence
 {
     public class AppDbContext(DbContextOptions<AppDbContext> options, IHttpContextAccessor httpContextAccessor) :
-         IdentityDbContext<ApplicationUser>(options)
+         IdentityDbContext<ApplicationUser, ApplicationRole, string>(options)
     {
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
 

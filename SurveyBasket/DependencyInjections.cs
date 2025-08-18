@@ -5,7 +5,6 @@ using Hangfire;
 using Mapster;
 using MapsterMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -174,7 +173,7 @@ namespace SurveyBasket
 
         private static IServiceCollection AddAuthConfig(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddIdentity<ApplicationUser, IdentityRole>().
+            services.AddIdentity<ApplicationUser, ApplicationRole>().
                  AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
 

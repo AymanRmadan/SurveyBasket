@@ -11,6 +11,8 @@ public class AcountsController(IUserService userService) : ControllerBase
 
 
     [HttpGet("")]
+    //this mean no Authorize
+    [AllowAnonymous]
     public async Task<IActionResult> Profile()
     {
         var result = await _userService.GetProfileAsync(User.GetUserId()!);
