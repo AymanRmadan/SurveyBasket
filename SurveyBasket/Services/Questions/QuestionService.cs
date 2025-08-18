@@ -2,11 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Hybrid;
 using SurveyBasket.Contracts.Answers.Responses;
+using SurveyBasket.Contracts.Common;
 using SurveyBasket.Contracts.Questions;
 using SurveyBasket.Contracts.Questions.Responses;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
-
+using System.Linq.Dynamic.Core;
 namespace SurveyBasket.Services.Questions
 {
     public class QuestionService : IQuestionService
@@ -25,40 +26,34 @@ namespace SurveyBasket.Services.Questions
             _hybridCache = hybridCache;
         }
 
-        public async Task<Result<IEnumerable<QuestionResponse>>> GetAllAsync(int pollId, CancellationToken cancellationToken = default)
+        public async Task<Result<PaginatedList<QuestionResponse>>> GetAllAsync(int pollId, RequestFilters filters, CancellationToken cancellationToken = default)
         {
-            var pollIsExists = await _context.Polls.AnyAsync(p => p.Id == pollId, cancellationToken: cancellationToken);
+            var pollIsExists = await _context.Polls.AnyAsync(x => x.Id == pollId, cancellationToken: cancellationToken);
+
             if (!pollIsExists)
+                return Result.Failure<PaginatedList<QuestionResponse>>(PollErrors.PollNotFound);
+
+            var query = _context.Questions
+                .Where(x => x.PollId == pollId);
+
+            if (!string.IsNullOrEmpty(filters.SearchValue))
             {
-                return Result.Failure<IEnumerable<QuestionResponse>>(PollErrors.PollNotFound);
+                query = query.Where(x => x.Content.Contains(filters.SearchValue));
             }
-            /*    // this will return all columns from DB
-                var questions = await _context.Questions
-                    .Where(question => question.PollId == pollId)
-                    .Include(question => question.Answers)
-                    .AsNoTracking()
-                    .ToListAsync(cancellationToken);*/
 
+            if (!string.IsNullOrEmpty(filters.SortColumn))
+            {
+                query = query.OrderBy($"{filters.SortColumn} {filters.SortDirection}");
+            }
 
-            // this will return only columns that i will selet it from DB
-            // this wat for big data
-            var questions = await _context.Questions
-                .Where(question => question.PollId == pollId)
-                .Include(question => question.Answers)
-               /* .Select(question => new QuestionResponse(
-                    question.Id,
-                    question.Content,
-                    question.Answers.Select(answer => new AnswerResponse(
-                        answer.Id,
-                        answer.Content
-                        ))
-                    ))*/
-               //ANother way to use Projection istead of select
-               .ProjectToType<QuestionResponse>()
-                .AsNoTracking()
-                .ToListAsync(cancellationToken);
+            var source = query
+                            .Include(x => x.Answers)
+                            .ProjectToType<QuestionResponse>()
+                            .AsNoTracking();
 
-            return Result.Success<IEnumerable<QuestionResponse>>(questions);
+            var questions = await PaginatedList<QuestionResponse>.CreateAsync(source, filters.PageNumber, filters.PageSize, cancellationToken);
+
+            return Result.Success(questions);
         }
 
         public async Task<Result<IEnumerable<QuestionResponse>>> GetAvailableAsync(int pollId, string userId, CancellationToken cancellationToken = default)
