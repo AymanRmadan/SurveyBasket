@@ -7,7 +7,7 @@ using SurveyBasket.Persistence;
 
 namespace SurveyBasket.Services.Votes
 {
-    public class VoteService(AppDbContext context) : IVoteServics
+    public class VoteServices(AppDbContext context) : IVoteServices
     {
         private readonly AppDbContext _context = context;
 

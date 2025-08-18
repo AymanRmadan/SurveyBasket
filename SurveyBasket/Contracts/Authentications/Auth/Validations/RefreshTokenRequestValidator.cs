@@ -7,8 +7,8 @@ namespace SurveyBasket.Contracts.Authentications.Auth.Validations
     {
         public RefreshTokenRequestValidator()
         {
-            RuleFor(r => r.token).NotEmpty();
-            RuleFor(r => r.refreshToken).NotEmpty();
+            RuleFor(r => r.Token).NotEmpty();
+            RuleFor(r => r.RefreshToken).NotEmpty();
 
 
         }

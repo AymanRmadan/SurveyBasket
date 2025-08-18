@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
 using SurveyBasket.Contracts.Authentications.Auth.Requests;
 using SurveyBasket.Contracts.Authentications.Emails;
+using SurveyBasket.Contracts.Authentications.Register;
+using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 using SurveyBasket.Services.Authentication;
 
 namespace SurveyBasket.Controllers;
@@ -44,7 +46,7 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
     }
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] RegisterRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Register([FromBody] AddRegisterRequest request, CancellationToken cancellationToken)
     {
         var result = await _authService.RegisterAsync(request, cancellationToken);
 
@@ -60,7 +62,7 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
     }
 
     [HttpPost("resend-confirmation-email")]
-    public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> ResendConfirmationEmail([FromBody] AddResendConfirmationEmailRequest request, CancellationToken cancellationToken)
     {
         var result = await _authService.ResendConfirmationEmailAsync(request);
 
@@ -76,7 +78,7 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
     }
 
     [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request)
+    public async Task<IActionResult> ResetPassword([FromBody] Contracts.Authentication.ResetPasswordRequest request)
     {
         var result = await _authService.ResetPasswordAsync(request);
 

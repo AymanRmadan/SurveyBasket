@@ -1,6 +1,6 @@
 ﻿namespace SurveyBasket.Contracts.Authentications.Auth.Requests
 {
-    public record RefreshTokenRequest(string token, string refreshToken);
+    public record RefreshTokenRequest(string Token, string RefreshToken);
 
 
 }

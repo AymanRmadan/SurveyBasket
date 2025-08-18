@@ -1,16 +1,17 @@
 ﻿using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Contracts.Requests;
 using SurveyBasket.Services.Questions;
+using SurveyBasket.Services.Votes;
 
 namespace SurveyBasket.Controllers;
 
 [Route("api/polls/{pollId}/vote")]
 [ApiController]
 [Authorize(Roles = DefaultRoles.Member)]
-public class VotesController(IQuestionService questionService, IVoteService voteService) : ControllerBase
+public class VotesController(IQuestionService questionService, IVoteServices voteService) : ControllerBase
 {
     private readonly IQuestionService _questionService = questionService;
-    private readonly IVoteService _voteService = voteService;
+    private readonly IVoteServices _voteService = voteService;
 
     [HttpGet("")]
     public async Task<IActionResult> Start([FromRoute] int pollId, CancellationToken cancellationToken)
@@ -26,7 +27,7 @@ public class VotesController(IQuestionService questionService, IVoteService vote
     [HttpPost("")]
     public async Task<IActionResult> Vote([FromRoute] int pollId, [FromBody] VoteRequest request, CancellationToken cancellationToken)
     {
-        var result = await _voteService.AddAsync(pollId, User.GetUserId()!, request, cancellationToken);
+        var result = await _voteService.AddVoteAsync(pollId, User.GetUserId()!, request, cancellationToken);
 
         return result.IsSuccess ? Created() : result.ToProblem();
     }
