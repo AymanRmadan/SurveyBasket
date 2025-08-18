@@ -1,8 +1,7 @@
-﻿namespace SurveyBasket.Authantication
+﻿namespace SurveyBasket.Authentication;
+
+public interface IJwtProvider
 {
-    public interface IJwtProvider
-    {
-        (string token, int expiresIn) GenerateToken(ApplicationUser user);
-        string? ValidateToken(string token);
-    }
+    (string token, int expiresIn) GenerateToken(ApplicationUser user, IEnumerable<string> roles, IEnumerable<string> permissions);
+    string? ValidateToken(string token);
 }

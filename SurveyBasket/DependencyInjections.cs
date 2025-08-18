@@ -10,6 +10,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SurveyBasket.Authantication;
+using SurveyBasket.Authentication;
+using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 using SurveyBasket.Services.Authentication;
@@ -218,6 +220,8 @@ namespace SurveyBasket
             });
 
 
+            services.AddTransient<IAuthorizationHandler, PermissionAuthorizationHandler>();
+            services.AddTransient<IAuthorizationPolicyProvider, PermissionAuthorizationPolicyProvider>();
 
 
             return services;

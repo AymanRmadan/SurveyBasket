@@ -3,13 +3,14 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using SurveyBasket.Abstractions.Consts;
-using SurveyBasket.Authantication;
+using SurveyBasket.Authentication;
 using SurveyBasket.Contracts.Authentication;
 using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
 using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 using SurveyBasket.Errors;
 using SurveyBasket.Helpers;
+using SurveyBasket.Persistence;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -20,7 +21,8 @@ namespace SurveyBasket.Services.Authentication
         , IJwtProvider jwtProvider
         , ILogger<AuthService> logger
         , IEmailSender emailSender
-        , IHttpContextAccessor httpContextAccessor) : IAuthService
+        , IHttpContextAccessor httpContextAccessor,
+        AppDbContext context) : IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager = userManager;
         private readonly SignInManager<ApplicationUser> _signInManager = signInManager;
@@ -29,51 +31,37 @@ namespace SurveyBasket.Services.Authentication
         private readonly int _refreshTokenExpirtDays = 14;
         private readonly IEmailSender _emailSender = emailSender;
         private readonly IHttpContextAccessor _httpContextAccessor = httpContextAccessor;
+        private readonly AppDbContext _context = context;
 
-        public async Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellation = default)
+        public async Task<Result<AuthResponse>> GetTokenAsync(string email, string password, CancellationToken cancellationToken = default)
         {
-            // another way
-            /*  if (await _userManager.FindByEmailAsync(email) is not { } user)
-                  return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);*/
-
-
-            var user = await _userManager.FindByEmailAsync(email);
-            if (user is null)
-            {
+            if (await _userManager.FindByEmailAsync(email) is not { } user)
                 return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
-            }
-            /*  var isValidPassword = await _userManager.CheckPasswordAsync(user, password);
-              if (!isValidPassword)
-              {
-                  return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
-              }*/
 
             var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+
             if (result.Succeeded)
             {
-                var (token, expireIn) = _jwtProvider.GenerateToken(user);
+                var (userRoles, userPermissions) = await GetUserRolesAndPermissions(user, cancellationToken);
 
+                var (token, expiresIn) = _jwtProvider.GenerateToken(user, userRoles, userPermissions);
                 var refreshToken = GenerateRefreshToken();
                 var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpirtDays);
 
                 user.RefreshTokens.Add(new RefreshToken
                 {
                     Token = refreshToken,
-                    ExpiresOn = refreshTokenExpiration,
-
+                    ExpiresOn = refreshTokenExpiration
                 });
+
                 await _userManager.UpdateAsync(user);
 
-                var response = new AuthResponse(user.Id, user.Email, user.FirstName
-                                       , user.LastName, token, expireIn * 60
-                                       , refreshToken, refreshTokenExpiration);
+                var response = new AuthResponse(user.Id, user.Email, user.FirstName, user.LastName, token, expiresIn, refreshToken, refreshTokenExpiration);
+
                 return Result.Success(response);
             }
 
-            return Result.Failure<AuthResponse>(result.IsNotAllowed
-                                ? UserErrors.EmailNotConfirmed
-                                : UserErrors.InvalidCredentials);
-
+            return Result.Failure<AuthResponse>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
         }
 
 
@@ -95,7 +83,8 @@ namespace SurveyBasket.Services.Authentication
             userRefrshToken.RevokedOn = DateTime.UtcNow;
 
 
-            var (newToken, expireIn) = _jwtProvider.GenerateToken(user);
+            var (userRoles, userPermissions) = await GetUserRolesAndPermissions(user, cancellation);
+            var (newToken, expireIn) = _jwtProvider.GenerateToken(user, userRoles, userPermissions);
 
             var newRefreshToken = GenerateRefreshToken();
             var refreshTokenExpiration = DateTime.UtcNow.AddDays(_refreshTokenExpirtDays);
@@ -326,5 +315,30 @@ namespace SurveyBasket.Services.Authentication
         }
 
 
+        private async Task<(IEnumerable<string> roles, IEnumerable<string> permissions)> GetUserRolesAndPermissions(ApplicationUser user, CancellationToken cancellationToken)
+        {
+            var userRoles = await _userManager.GetRolesAsync(user);
+
+            //var userPermissions = await _context.Roles
+            //    .Join(_context.RoleClaims,
+            //        role => role.Id,
+            //        claim => claim.RoleId,
+            //        (role, claim) => new { role, claim }
+            //    )
+            //    .Where(x => userRoles.Contains(x.role.Name!))
+            //    .Select(x => x.claim.ClaimValue!)
+            //    .Distinct()
+            //    .ToListAsync(cancellationToken);
+
+            var userPermissions = await (from r in _context.Roles
+                                         join p in _context.RoleClaims
+                                         on r.Id equals p.RoleId
+                                         where userRoles.Contains(r.Name!)
+                                         select p.ClaimValue!)
+                                         .Distinct()
+                                         .ToListAsync(cancellationToken);
+
+            return (userRoles, userPermissions);
+        }
     }
 }

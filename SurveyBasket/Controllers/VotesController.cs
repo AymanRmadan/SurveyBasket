@@ -1,41 +1,33 @@
-﻿using SurveyBasket.Contracts.Requests;
+﻿using SurveyBasket.Abstractions.Consts;
+using SurveyBasket.Contracts.Requests;
 using SurveyBasket.Services.Questions;
-using SurveyBasket.Services.Votes;
 
-namespace SurveyBasket.Controllers
+namespace SurveyBasket.Controllers;
+
+[Route("api/polls/{pollId}/vote")]
+[ApiController]
+[Authorize(Roles = DefaultRoles.Member)]
+public class VotesController(IQuestionService questionService, IVoteService voteService) : ControllerBase
 {
-    [Route("api/polls/{pollId}/[controller]")]
-    [ApiController]
-    //  [Authorize]
-    public class VotesController(IQuestionService questionService, IVoteServics voteServics) : ControllerBase
+    private readonly IQuestionService _questionService = questionService;
+    private readonly IVoteService _voteService = voteService;
+
+    [HttpGet("")]
+    public async Task<IActionResult> Start([FromRoute] int pollId, CancellationToken cancellationToken)
     {
-        private readonly IQuestionService _questionService = questionService;
-        private readonly IVoteServics _voteServics = voteServics;
+        var userId = User.GetUserId();
 
-        [HttpGet("")]
-        //[ResponseCache(Duration = 60)]
-        // [OutputCache(Duration = 60)]
-        public async Task<IActionResult> Start([FromRoute] int pollId, CancellationToken cancellationToken)
-        {
-            // var user = User.GetUserId();
-            var user = "81cd0080-4b11-40d0-8a28-ec840663216e";
-            var result = await _questionService.GetAvailableAsync(pollId, user!, cancellationToken);
+        var result = await _questionService.GetAvailableAsync(pollId, userId!, cancellationToken);
 
-            return result.IsSuccess
-                  ? Ok(result)
-                  : result.ToProblem();
-        }
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
 
-        [HttpPost("")]
-        public async Task<IActionResult> Vote([FromRoute] int pollId, [FromBody] VoteRequest request, CancellationToken cancellationToken)
-        {
-            var user = User.GetUserId();
-            var result = await _voteServics.AddVoteAsync(pollId, user!, request, cancellationToken);
+    }
 
-            return result.IsSuccess
-                  ? Created()
-                  : result.ToProblem();
-        }
+    [HttpPost("")]
+    public async Task<IActionResult> Vote([FromRoute] int pollId, [FromBody] VoteRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _voteService.AddAsync(pollId, User.GetUserId()!, request, cancellationToken);
 
+        return result.IsSuccess ? Created() : result.ToProblem();
     }
 }
