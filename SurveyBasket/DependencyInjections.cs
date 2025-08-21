@@ -77,6 +77,7 @@ namespace SurveyBasket
             services.AddScoped<IResultService, ResultService>();
             services.AddScoped<IUserService, UserService>();
             // services.AddScoped<ICacheService, CacheService>();
+            services.AddScoped<IRoleService, RoleService>();
 
 
             services.AddExceptionHandler<GlobalExceptionHandler>();
