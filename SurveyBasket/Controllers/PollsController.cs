@@ -1,4 +1,5 @@
 ﻿using Asp.Versioning;
+using Microsoft.AspNetCore.RateLimiting;
 using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Contracts.Requests;
@@ -28,6 +29,7 @@ namespace SurveyBasket.Controllers
         [MapToApiVersion(1)]
         [HttpGet("current")]
         [Authorize(Roles = DefaultRoles.Member)]
+        [EnableRateLimiting(RateLimiters.UserLimiter)]
         public async Task<IActionResult> GetCurrentV1(CancellationToken cancellationToken)
         {
             return Ok(await _pollService.GetCurrentAsyncV1(cancellationToken));

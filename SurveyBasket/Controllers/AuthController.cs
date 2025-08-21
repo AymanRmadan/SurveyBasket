@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.Data;
+using Microsoft.AspNetCore.RateLimiting;
+using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Contracts.Authentications.Auth.Requests;
 using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
@@ -9,6 +11,8 @@ namespace SurveyBasket.Controllers;
 
 [Route("[controller]")]
 [ApiController]
+[EnableRateLimiting(RateLimiters.IpLimiter)]
+
 public class AuthController(IAuthService authService, ILogger<AuthController> logger) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
@@ -46,6 +50,7 @@ public class AuthController(IAuthService authService, ILogger<AuthController> lo
     }
 
     [HttpPost("register")]
+    [DisableRateLimiting]
     public async Task<IActionResult> Register([FromBody] AddRegisterRequest request, CancellationToken cancellationToken)
     {
         var result = await _authService.RegisterAsync(request, cancellationToken);

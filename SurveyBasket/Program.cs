@@ -69,6 +69,9 @@ app.UseAuthorization();
 app.MapControllers();
 app.UseExceptionHandler();
 
+// Rate Limit
+app.UseRateLimiter();
+
 //Health Check
 app.MapHealthChecks("health", new HealthCheckOptions
 {
