@@ -13,6 +13,7 @@ using SurveyBasket.Authantication;
 using SurveyBasket.Authentication;
 using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Errors;
+using SurveyBasket.Health;
 using SurveyBasket.Persistence;
 using SurveyBasket.Services.Authentication;
 using SurveyBasket.Services.Polls;
@@ -102,6 +103,12 @@ namespace SurveyBasket
 
 
             services.AddBackgroundJobsConfig(configuration);
+
+            //Health Check
+            services.AddHealthChecks()
+            .AddSqlServer(name: "database", connectionString: configuration.GetConnectionString("DefaultConnection")!)
+            .AddHangfire(options => { options.MinimumAvailableServers = 1; })
+            .AddCheck<MailProviderHealthCheck>(name: "mail service");
 
 
             return services;
