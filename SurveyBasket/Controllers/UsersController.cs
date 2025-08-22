@@ -16,16 +16,16 @@ public class UsersController(IUserService userService) : ControllerBase
         return Ok(await _userService.GetAllAsync(cancellationToken));
     }
 
-    /* [HttpGet("{id}")]
-     [HasPermission(Permissions.GetUsers)]
-     public async Task<IActionResult> Get([FromRoute] string id)
-     {
-         var result = await _userService.GetAsync(id);
+    [HttpGet("{id}")]
+    [HasPermission(Permissions.GetUsers)]
+    public async Task<IActionResult> Get([FromRoute] string id)
+    {
+        var result = await _userService.GetAsync(id);
 
-         return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
-     }
+        return result.IsSuccess ? Ok(result.Value) : result.ToProblem();
+    }
 
-     [HttpPost("")]
+    /* [HttpPost("")]
      [HasPermission(Permissions.AddUsers)]
      public async Task<IActionResult> Add([FromBody] CreateUserRequest request, CancellationToken cancellationToken)
      {

@@ -7,6 +7,8 @@ namespace SurveyBasket.Services
     public interface IUserService
     {
         Task<IEnumerable<UserResponse>> GetAllAsync(CancellationToken cancellationToken = default);
+        Task<Result<UserResponse>> GetAsync(string id);
+
         public Task<Result<UserProfileResponse>> GetProfileAsync(string userId);
         public Task<Result> UpdateProfileAsync(string userId, UpdateProfileRequest request);
 
