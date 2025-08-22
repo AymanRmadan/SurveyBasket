@@ -123,7 +123,7 @@ namespace SurveyBasket.Controllers
         }
 
 
-        [HttpPut("{id}/togglePublish")]
+        [HttpPut("{id}/toggle-publish")]
         [HasPermission(Permissions.UpdatePolls)]
         public async Task<IActionResult> TogglePublish([FromRoute] int id, CancellationToken cancellation)
 

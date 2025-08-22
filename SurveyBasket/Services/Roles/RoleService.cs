@@ -12,9 +12,9 @@ public class RoleService(RoleManager<ApplicationRole> roleManager, AppDbContext 
     private readonly RoleManager<ApplicationRole> _roleManager = roleManager;
     private readonly AppDbContext _context = context;
 
-    public async Task<IEnumerable<RoleResponse>> GetAllAsync(bool? includeDisabled = false, CancellationToken cancellationToken = default) =>
+    public async Task<IEnumerable<RoleResponse>> GetAllAsync(bool includeDisabled = false, CancellationToken cancellationToken = default) =>
         await _roleManager.Roles
-            .Where(x => !x.IsDefault && (!x.IsDeleted || (includeDisabled.HasValue && includeDisabled.Value)))
+            .Where(x => !x.IsDefault && (!x.IsDeleted || includeDisabled))
             .ProjectToType<RoleResponse>()
             .ToListAsync(cancellationToken);
 

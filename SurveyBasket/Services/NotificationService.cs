@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI.Services;
+﻿using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Helpers;
 using SurveyBasket.Persistence;
 
@@ -36,7 +36,8 @@ public class NotificationService(
         }
 
         //TODO: Select members only
-        var users = await _userManager.Users.ToListAsync();
+        var users = await _userManager.GetUsersInRoleAsync(DefaultRoles.Member);
+        //var users = await _userManager.Users.ToListAsync();
 
         var origin = _httpContextAccessor.HttpContext?.Request.Headers.Origin;
 
