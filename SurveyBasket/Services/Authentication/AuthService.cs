@@ -40,7 +40,7 @@ namespace SurveyBasket.Services.Authentication
             if (user.IsDisabled)
                 return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
 
-            var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+            var result = await _signInManager.PasswordSignInAsync(user, password, false, true);
 
             if (result.Succeeded)
             {
@@ -63,7 +63,14 @@ namespace SurveyBasket.Services.Authentication
                 return Result.Success(response);
             }
 
-            return Result.Failure<AuthResponse>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
+            var error = result.IsNotAllowed
+            ? UserErrors.EmailNotConfirmed
+            : result.IsLockedOut
+            ? UserErrors.LockedUser
+            : UserErrors.InvalidCredentials;
+
+            return Result.Failure<AuthResponse>(error);
+            //  return Result.Failure<AuthResponse>(result.IsNotAllowed ? UserErrors.EmailNotConfirmed : UserErrors.InvalidCredentials);
         }
 
 
@@ -80,6 +87,9 @@ namespace SurveyBasket.Services.Authentication
 
             if (user.IsDisabled)
                 return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
+
+            if (user.LockoutEnd > DateTime.UtcNow)
+                return Result.Failure<AuthResponse>(UserErrors.LockedUser);
 
             var userRefrshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
             if (userRefrshToken is null)
