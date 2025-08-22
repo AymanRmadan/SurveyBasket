@@ -29,13 +29,13 @@ namespace SurveyBasket.Mapp
            .Map(dest => dest, src => src.user)
            .Map(dest => dest.Roles, src => src.roles);
 
-            /*   config.NewConfig<CreateUserRequest, ApplicationUser>()
-                   .Map(dest => dest.UserName, src => src.Email)
-                   .Map(dest => dest.EmailConfirmed, src => true);
+            config.NewConfig<CreateUserRequest, ApplicationUser>()
+                .Map(dest => dest.UserName, src => src.Email)
+                .Map(dest => dest.EmailConfirmed, src => true);
 
-               config.NewConfig<UpdateUserRequest, ApplicationUser>()
-                   .Map(dest => dest.UserName, src => src.Email)
-                   .Map(dest => dest.NormalizedUserName, src => src.Email.ToUpper());*/
+            config.NewConfig<UpdateUserRequest, ApplicationUser>()
+                .Map(dest => dest.UserName, src => src.Email)
+                .Map(dest => dest.NormalizedUserName, src => src.Email.ToUpper());
 
 
         }
