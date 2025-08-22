@@ -5,6 +5,9 @@
         public static readonly Error InvalidCredentials =
             new Error("User.InvalidCreddntials", "Invalid email / password", StatusCodes.Status401Unauthorized);
 
+        public static readonly Error DisabledUser =
+        new("User.DisabledUser", "Disabled user, please contact your administrator", StatusCodes.Status401Unauthorized);
+
         public static readonly Error InvalidJwtToken =
             new("User.InvalidJwtToken", "Invalid Jwt token", StatusCodes.Status401Unauthorized);
 

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Authentication;
-using SurveyBasket.Contracts.Authentication;
 using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
 using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
@@ -37,6 +36,9 @@ namespace SurveyBasket.Services.Authentication
         {
             if (await _userManager.FindByEmailAsync(email) is not { } user)
                 return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
+
+            if (user.IsDisabled)
+                return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
 
             var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
 
@@ -75,6 +77,9 @@ namespace SurveyBasket.Services.Authentication
             var user = await _userManager.FindByIdAsync(userId);
             if (user is null)
                 return Result.Failure<AuthResponse>(UserErrors.InvalidCredentials);
+
+            if (user.IsDisabled)
+                return Result.Failure<AuthResponse>(UserErrors.DisabledUser);
 
             var userRefrshToken = user.RefreshTokens.SingleOrDefault(x => x.Token == refreshToken && x.IsActive);
             if (userRefrshToken is null)
