@@ -8,6 +8,8 @@ global using SurveyBasket.Contracts.Authentications.Auth.Responses;
 global using SurveyBasket.Entities;
 global using SurveyBasket.Extensions;
 global using SurveyBasket.Services;
+global using System.ComponentModel.DataAnnotations;
+
 
 
 

@@ -1,5 +1,4 @@
-﻿using SurveyBasket.Contracts.Authentication;
-using SurveyBasket.Contracts.Authentications.Emails;
+﻿using SurveyBasket.Contracts.Authentications.Emails;
 using SurveyBasket.Contracts.Authentications.Register;
 using SurveyBasket.Contracts.Authentications.ResentConfirmationEmail;
 

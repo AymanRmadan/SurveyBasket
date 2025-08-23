@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace SurveyBasket.Settings;
+﻿namespace SurveyBasket.Settings;
 
 public class MailSettings
 {
