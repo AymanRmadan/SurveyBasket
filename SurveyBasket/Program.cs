@@ -4,6 +4,7 @@ using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Serilog;
 using SurveyBasket;
+using SurveyBasket.Services.Notifications;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,6 +1,7 @@
 ﻿using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Authentication.Filters;
 using SurveyBasket.Contracts.Users;
+using SurveyBasket.Services.Users;
 
 namespace SurveyBasket.Controllers;
 

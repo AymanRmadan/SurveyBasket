@@ -4,7 +4,7 @@ using SurveyBasket.Abstractions.Consts;
 using SurveyBasket.Helpers;
 using SurveyBasket.Persistence;
 
-namespace SurveyBasket.Services;
+namespace SurveyBasket.Services.Notifications;
 
 public class NotificationService(
     AppDbContext context,

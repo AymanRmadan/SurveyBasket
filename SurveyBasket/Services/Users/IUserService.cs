@@ -2,7 +2,7 @@
 using SurveyBasket.Contracts.Users.Requests;
 using SurveyBasket.Contracts.Users.Responses;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Users
 {
     public interface IUserService
     {

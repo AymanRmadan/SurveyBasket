@@ -6,6 +6,7 @@ using SurveyBasket.Contracts.Requests;
 using SurveyBasket.Contracts.Responses;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
+using SurveyBasket.Services.Notifications;
 
 namespace SurveyBasket.Services.Polls
 {

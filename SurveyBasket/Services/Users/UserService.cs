@@ -7,7 +7,7 @@ using SurveyBasket.Contracts.Users.Responses;
 using SurveyBasket.Errors;
 using SurveyBasket.Persistence;
 
-namespace SurveyBasket.Services
+namespace SurveyBasket.Services.Users
 {
 
     public class UserService(UserManager<ApplicationUser> userManager, AppDbContext context, IRoleService roleService) : IUserService
